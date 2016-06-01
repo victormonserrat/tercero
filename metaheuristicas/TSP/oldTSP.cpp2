@@ -1,0 +1,67 @@
+#include "TSP_Instance.hpp"
+#include "TSP_Solution.hpp"
+#include "TSP_SolGenerator.hpp"
+
+#include "menu.hpp"
+
+//#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <ctime>
+//#include <algorithm>
+
+int main( int argc, char *argv[] ) {
+  if ( argc != 2 ){
+    std::cout << "\E[31mUso: ./TSP nombreFichero\e[0m" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::string nameFile = argv[1];
+  int nProblem;   // Problem I want to work with
+  int nDiversifySolutions;
+  int nIntensifySolutions;
+
+
+  srand( time( NULL ) );
+
+  TSP::Instance instance ( nameFile );
+
+  //menu ( instance.problems().size(), nProblem, nDiversifySolutions, nIntensifySolutions );
+
+  std::vector<TSP::Node> v;
+  TSP::Node n0 (2.0, 3.0);
+  TSP::Node n1 (1.0, 4.0);
+  TSP::Node n2 (4.0, 3.0);
+  TSP::Node n3 (1.0, 2.0);
+  TSP::Node n4 (3.0, 1.0);
+  v.push_back(n0);
+  v.push_back(n1);
+  v.push_back(n2);
+  v.push_back(n3);
+  v.push_back(n4);
+  TSP::Problem problem;
+  problem.nodes(v);
+  TSP::Solution solution (problem);
+  /*for (int i = 0 ; i < solution.order().size() ; i++){
+    std::cout << solution.order()[i] << "\t" << solution.distances()[i] << std::endl;
+  }
+  std::cout << solution.totalDistance() << std::endl;*/
+
+  std::cout << std::endl;
+  std::vector<TSP::Solution> solutionsSolGenerator;
+  TSP::SolGenerator solSolution (solution);
+  solutionsSolGenerator = solSolution.generate (2);
+  /*for (int i = 0 ; i < solutionsSolGenerator[0].order().size() ; i++){
+    std::cout << solutionsSolGenerator[0].order()[i] << "\t" << solutionsSolGenerator[0].distances()[i] << std::endl;
+  }
+  //std::cout << solutionsSolGenerator[0].totalDistance() << std::endl;
+
+  std::cout << std::endl;
+  for (int i = 0 ; i < solutionsSolGenerator[1].order().size() ; i++){
+    std::cout << solutionsSolGenerator[1].order()[i] << "\t" << solutionsSolGenerator[1].distances()[i] << std::endl;
+  }*/
+  //std::cout << solutionsSolGenerator[1].totalDistance() << std::endl;
+
+
+  return EXIT_SUCCESS;
+}

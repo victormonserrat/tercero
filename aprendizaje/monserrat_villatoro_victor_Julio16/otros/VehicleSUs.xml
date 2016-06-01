@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<job>
+<process>
+<number-of-executions>30</number-of-executions>
+<algorithm type="net.sf.jclec.nnep.algorithm.DoubleElitistNeuralNetAlgorithm">
+<double-elitism-error-function>net.sf.jclec.problem.errorfunctions.CCRErrorFunction</double-elitism-error-function>
+<population-size>1000</population-size>
+<max-of-generations>100</max-of-generations>
+<creation-ratio>10</creation-ratio>
+<percentage-second-mutator>10</percentage-second-mutator>
+<max-generations-without-improving-mean>10</max-generations-without-improving-mean>
+<max-generations-without-improving-best>10</max-generations-without-improving-best>
+<fitness-difference>1.0E-7</fitness-difference>
+<species type="net.sf.jclec.nnep.NeuralNetIndividualSpecies">
+<neural-net-type>net.sf.jclec.nnep.neuralnet.NeuralNetClassifier</neural-net-type>
+<input-layer>
+<number-of-inputs>18</number-of-inputs>
+</input-layer>
+<hidden-layer biased="false" type="net.sf.jclec.nnep.neuralnet.SigmLayer">
+<minimum-number-of-neurons>1</minimum-number-of-neurons>
+<initial-maximum-number-of-neurons>2</initial-maximum-number-of-neurons>
+<maximum-number-of-neurons>3</maximum-number-of-neurons>
+<initiator-of-links>net.sf.jclec.nnep.initiators.RandomInitiator</initiator-of-links>
+<weight-range closure="closed-closed" left="-1.0" right="1.0" type="net.sf.jclec.util.range.Interval"/>
+</hidden-layer>
+<output-layer biased="true" type="net.sf.jclec.nnep.neuralnet.LinearLayer">
+<number-of-outputs>3</number-of-outputs>
+<initiator-of-links>net.sf.jclec.nnep.initiators.RandomInitiator</initiator-of-links>
+<weight-range closure="closed-closed" left="-10.0" right="10.0" type="net.sf.jclec.util.range.Interval"/>
+</output-layer>
+</species>
+<evaluator normalize-data="true" type="net.sf.jclec.problem.classification.softmax.SoftmaxClassificationProblemEvaluator">
+<input-interval closure="closed-closed" left="1.0" right="2.0"/>
+<output-interval closure="closed-closed" left="0.0" right="1.0"/>
+<error-function>net.sf.jclec.problem.errorfunctions.LogisticErrorFunction</error-function>
+<train-data file-name="/home/victor/Downloads/NNEP/data/subsets/vehicle/holdout/train_vehicle.dat"/>
+<test-data file-name="/home/victor/Downloads/NNEP/data/subsets/vehicle/holdout/test_vehicle.dat"/>
+</evaluator>
+<provider evaluate="true" type="net.sf.jclec.nnep.NeuralNetCreator"/>
+<mutator1 evaluate="true" type="net.sf.jclec.nnep.mutators.structural.StructuralMutator">
+<temperature-exponent value="1.0"/>
+<significative-weigth value="1.0E-7"/>
+<neurons-ranges>
+<added max="2" min="1"/>
+<deleted max="2" min="1"/>
+</neurons-ranges>
+<links-ranges relative="true">
+<percentages hidden="30" output="5"/>
+</links-ranges>
+</mutator1>
+<mutator2 selective="false" type="net.sf.jclec.nnep.mutators.parametric.ParametricSRMutator">
+<temperature-exponent value="0.0"/>
+<amplitude value="5.0"/>
+<fitness-difference value="1.0E-7"/>
+<initial-alpha-values input="0.5" output="1.0"/>
+</mutator2>
+<rand-gen-factory seed="0" type="net.sf.jclec.util.random.RanNnepFactory"/>
+</algorithm>
+<listeners>
+<listener chart-frame-visible="true" problem-type="Classification" report-name="VehicleSUs" show-error="true" show-fitness="true" show-mean-fitness="true" type="net.sf.jclec.nnepGUI.monoobjective.listener.chart.NeuralNetGenerationChartReporter"/>
+<listener report-name="VehicleSUs,VehicleSUs" type="net.sf.jclec.nnepGUI.monoobjective.listener.NeuralNetGenerationGraphicalReporter"/>
+<listener number-of-decimals="7" type="net.sf.jclec.nnepGUI.monoobjective.listener.NeuralNetStatisticalReporter">
+<report-dir-name>report</report-dir-name>
+<extended-report-frequency>20</extended-report-frequency>
+</listener>
+</listeners>
+</process>
+</job>

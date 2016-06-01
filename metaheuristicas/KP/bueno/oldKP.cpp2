@@ -1,0 +1,119 @@
+#include "KP_Solution.hpp"
+#include "KP_SolGenerator.hpp"
+#include "KP_Instance.hpp"
+#include "menu.hpp"
+#include "persistence.hpp"
+
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <ctime>
+#include <algorithm>
+
+int main( int argc, char *argv[] ) {
+  if ( argc != 2 ){
+    std::cout << "\E[31mUso: ./KP nombreFichero\e[0m" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::string nameFile = argv[1];
+  int nProblem;   // Problem I want to work with
+  int nDiversifySolutions;
+  int nIntensifySolutions;
+  unsigned long long int bestProfit = 0;
+  std::vector <unsigned long long int> solGenerated;
+  std::vector <unsigned long long int> profitSolution;
+  std::vector <unsigned long long int> profitSolutions;
+  std::vector <unsigned int> aux;
+  std::vector <unsigned int> positionsDiversify;
+  std::string fileDataDiversify;
+  std::string fileDataDiversifySequentially;
+  std::string fileDataIntensify;
+  std::string fileDataBestProfitDiversify;
+  std::string fileDataObjectsBestProfitDiversify;
+  std::string subStr = nameFile.substr(6, nameFile.size()-10);
+
+  Persistence p;
+
+
+  srand( time( NULL ) );
+  KP::Instance instance ( nameFile );
+
+
+  menu ( instance.problems().size(), nProblem, nDiversifySolutions, nIntensifySolutions );
+
+  fileDataDiversify =  "profitDiversify" + subStr +
+  "-" + std::to_string(nProblem) + "-" + std::to_string(nDiversifySolutions) +
+  "-" + std::to_string(nIntensifySolutions) + ".txt";
+
+  fileDataDiversifySequentially =  "profitDiversify" + subStr +
+  "-" + std::to_string(nProblem) + "-" + std::to_string(nDiversifySolutions) +
+  "-" + std::to_string(nIntensifySolutions) + "Sequentially.txt";
+
+  fileDataIntensify =  "profitIntensify" + subStr +
+  "-" + std::to_string(nProblem) + "-" + std::to_string(nDiversifySolutions) +
+  "-" + std::to_string(nIntensifySolutions) + ".txt";
+
+  fileDataBestProfitDiversify =  "bestProfitDiversify" + subStr +
+  "-" + std::to_string(nProblem) + "-" + std::to_string(nDiversifySolutions) +
+  "-" + std::to_string(nIntensifySolutions) + ".txt";
+
+  fileDataObjectsBestProfitDiversify = "objectsBestProfitDiversify" + subStr +
+  "-" + std::to_string(nProblem) + "-" + std::to_string(nDiversifySolutions) +
+  "-" + std::to_string(nIntensifySolutions) + ".txt";
+
+  std::vector <KP::Solution> solutions (nDiversifySolutions);
+
+  int total = 0;
+  std::cout << "Capacity of the knacksack: " << instance.problems()[nProblem-1].knacksack().capacity() << std::endl;
+
+  for (int i = 0; i < nDiversifySolutions; i++) {
+    KP::Solution solution ( instance.problems()[nProblem-1] );
+    profitSolution.push_back (instance.profit(solution));
+
+    if (bestProfit < instance.profit(solution)){
+      bestProfit = instance.profit(solution);
+      p.saveBestSolutionDiversify(solution, fileDataObjectsBestProfitDiversify);
+    }
+    p.saveBestProfitDiversify (bestProfit, i, fileDataBestProfitDiversify);
+
+    for (int j = 0; j < nIntensifySolutions ; j++){
+      KP::SolGenerator solGenerator ( solution );
+      solutions = solGenerator.generate( nIntensifySolutions );
+      for (unsigned k = 0 ; k < solutions[j].problem().objects().size() ; k ++){
+        if( solutions[j].objects()[k] ) {
+          total += solutions[j].problem().objects()[k].weight();
+        }
+      }
+      if (j == 0){
+        aux.push_back (profitSolution[i]);
+      }
+      aux.push_back (instance.profit(solutions[j]));
+      solGenerated.push_back  (total);
+      total = 0;
+    }
+
+    if ( i < aux.size()-1 ){
+      if (aux[i] < aux[i+1]){
+        std::sort( aux.begin(), aux.end() );
+      }
+      else std::sort( aux.rbegin(), aux.rend() );
+    }
+    else std::sort( aux.begin(), aux.end() );
+    for (unsigned k = 0 ; k < aux.size() ; k ++){
+      profitSolutions.push_back (aux[k]);
+    }
+
+    aux.clear();
+    std::cout << "Diversifying... \E[32m(" << i+1 << " of " << nDiversifySolutions << ").\e[0m" << std::endl;
+  }
+  for (int i = 0 , j = nIntensifySolutions ; j < nDiversifySolutions*(nIntensifySolutions+1) ;  i ++, j += nIntensifySolutions+1 ){
+    auto aux1 = std::find(profitSolutions.begin(), profitSolutions.begin()+j, profitSolution[i]) - profitSolutions.begin();
+    positionsDiversify.push_back(aux1);
+  }
+
+  p.saveProfitDiversify( profitSolution, fileDataDiversify, positionsDiversify, fileDataDiversifySequentially );
+  p.saveProfitIntensify ( profitSolutions, fileDataIntensify ) ;
+
+  return EXIT_SUCCESS;
+}

@@ -1,0 +1,26 @@
+#ifndef __PERSISTENCE_HPP__
+#define __PERSISTENCE_HPP__
+
+#include "KP_Solution.hpp"
+
+#include <vector>
+#include <string>
+
+class Persistence{
+	private:
+
+	public:
+		void saveProfitDiversify( std::vector <unsigned long long int> const &data,
+		               						std::string const &fileName,
+															std::vector <unsigned int> const &positionsDiversify,
+														 	std::string const &fileNameSequentially );
+		void saveProfitIntensify( std::vector <unsigned long long int> const &data,
+							 		            std::string const &fileName );
+		void saveBestProfitDiversify (unsigned long long int const &bestCurrentProfit,
+																	int const &iteration,
+																 	std::string const &fileName );
+		void saveBestSolutionDiversify (KP::Solution const &solution,
+																		std::string const &fileName);
+};
+
+#endif

@@ -1,0 +1,27 @@
+#include "menu.hpp"
+
+#include <iostream>
+
+void menu ( const int &problems, int &nProblem,
+            int &nDiversifySolutions, int &nIntensifySolutions) {
+  nProblem = 0;
+  nDiversifySolutions = 0;
+  nIntensifySolutions = 0;
+
+  while ( nProblem < 1 || nProblem > problems ){
+    system ("clear");
+    std::cout << "We found " << problems << " solutions in file." << std::endl;
+    std::cout << "Which solution do you want to work with? (1 - " << problems << "): ";
+    std::cin >> nProblem;
+  }
+
+  while (nDiversifySolutions <= 0 ) {
+    std::cout << "How many solutions do you want to generate diversifying? ";
+    std::cin >> nDiversifySolutions;
+  }
+
+  while (nIntensifySolutions <= 0 ) {
+    std::cout << "How many solutions do you want to generate intensifying? ";
+    std::cin >> nIntensifySolutions;
+  }
+}

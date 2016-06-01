@@ -1,0 +1,7 @@
+#ifndef __MENU_HPP__
+#define __MENU_HPP__
+
+void menu ( const int &problems, int &nProblem,
+            int &nDiversifySolutions, int &nIntensifySolutions);
+
+#endif

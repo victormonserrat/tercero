@@ -1,0 +1,58 @@
+#include "persistence.hpp"
+
+#include <fstream>
+#include <string>
+#include <vector>
+#include <iostream>
+
+void Persistence::saveProfitDiversify( std::vector <unsigned long long int> const &data,
+                                       std::string const &fileName,
+                                       std::vector <unsigned int> const &positionsDiversify,
+                                       std::string const &fileNameSequentially ){
+  std::ofstream fs1, fs2;
+  fs1.open(fileName.c_str(), std::ios::trunc);
+  fs2.open(fileNameSequentially.c_str(), std::ios::trunc);
+  for (size_t i = 0 ; i < data.size() ; i++){
+    fs1 << positionsDiversify[i] << " " << data[i] << std::endl;
+    fs2 << i << " " << data[i] << std::endl;
+  }
+  fs1.close();
+  fs2.close();
+}
+
+void Persistence::saveProfitIntensify( std::vector <unsigned long long int> const &data,
+                                       std::string const &fileName ){
+  std::ofstream fs;
+  fs.open(fileName.c_str(), std::ios::trunc);
+  for (size_t i = 0 ; i < data.size() ; i++){
+    fs << i << " " << data[i] << std::endl;
+  }
+  fs.close();
+}
+
+void Persistence::saveBestProfitDiversify (unsigned long long int const &bestCurrentProfit,
+                                           int const &iteration,
+                                           std::string const &fileName ){
+   std::ofstream fs;
+   if (iteration == 0){
+     fs.open(fileName.c_str(), std::ios::trunc);
+   }
+   else fs.open(fileName.c_str(), std::ios::app);
+
+   fs << iteration << " " << bestCurrentProfit << std::endl;
+   fs.close();
+}
+
+void Persistence::saveBestSolutionDiversify (KP::Solution const &solution,
+                                             std::string const &fileName){
+    std::ofstream fs;
+    fs.open(fileName.c_str(), std::ios::trunc);
+    for (int i = 0 ; i < solution.problem().objects().size() ; i ++) {
+      if (solution.objects()[i]){
+        fs << solution.problem().objects()[i].profit() << " " << solution.problem().objects()[i].weight() << std::endl;
+      }
+    }
+
+    fs.close();
+
+}
